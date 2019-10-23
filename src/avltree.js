@@ -9,26 +9,27 @@ class Node {
         this.right = null;
     }
 
-    print(notation) {
+    toArray(out, notation) {
         switch (notation) {
             case "prefix":
-                console.log(this.payload);
-                this.left && this.left.print(notation);
-                this.right && this.right.print(notation);
+                out.push(this.payload);
+                this.left && this.left.toArray(out, notation);
+                this.right && this.right.toArray(out, notation);
                 break;
             case "postfix":
-                this.left && this.left.print(notation);
-                this.right && this.right.print(notation);
-                console.log(this.payload);
+                this.left && this.left.toArray(out, notation);
+                this.right && this.right.toArray(out, notation);
+                out.push(this.payload);
                 break;
             default:
             case "infix":
-                this.left && this.left.print(notation);
-                console.log(this.payload);
-                this.right && this.right.print(notation);
+                this.left && this.left.toArray(out, notation);
+                out.push(this.payload);
+                this.right && this.right.toArray(out, notation);
                 break;
         }
     }
+
     rotateLeft(oldRoot) {
         if (!oldRoot)
             throw new Error('Cannot rotate a null node');
@@ -78,6 +79,7 @@ class Node {
                 atNode.balance = BALANCED;      //this node is balanced
                 atNodeRight.balance = BALANCED; //as is new root node
                 return { taller: false, newRootNode: this.rotateLeft(atNode) };
+            /* istanbul ignore next */
             case BALANCED:
                 throw new Error('Missed a balance operation. ' +
                     'This should never happen in a valid AVL Tree');
@@ -243,8 +245,10 @@ class Tree {
             this.root = newRootNode;
     }
 
-    print(options = { notation: "infix" }) {
-        this.root.print(options.notation);
+    toArray(options = { notation: "infix" }) {
+        let out = [];
+        this.root.toArray(out, options.notation);
+        return out;
     }
 }
 
