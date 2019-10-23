@@ -9,6 +9,26 @@ class Node {
         this.right = null;
     }
 
+    print(notation) {
+        switch (notation) {
+            case "prefix":
+                console.log(this.payload);
+                this.left && this.left.print(notation);
+                this.right && this.right.print(notation);
+                break;
+            case "postfix":
+                this.left && this.left.print(notation);
+                this.right && this.right.print(notation);
+                console.log(this.payload);
+                break;
+            default:
+            case "infix":
+                this.left && this.left.print(notation);
+                console.log(this.payload);
+                this.right && this.right.print(notation);
+                break;
+        }
+    }
     rotateLeft(oldRoot) {
         if (!oldRoot)
             throw new Error('Cannot rotate a null node');
@@ -186,6 +206,9 @@ class Tree {
             this.root = newRootNode;
     }
 
+    print(options = { notation: "infix" }) {
+        this.root.print(options.notation);
+    }
 }
 
 module.exports = Tree;
