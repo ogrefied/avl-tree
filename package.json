@@ -1,0 +1,15 @@
+{
+  "name": "avl-tree",
+  "version": "0.5.0",
+  "description": "Implements a self-balancing binary tree",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "avltree",
+    "tree"
+  ],
+  "author": "Marcel Guerin <marcel.guerin@gmail.com>",
+  "license": "MIT"
+}
