@@ -21,8 +21,8 @@ class Node {
                 this.right && this.right.toArray(out, notation);
                 out.push(this.payload);
                 break;
-            default:
             case "infix":
+            default:
                 this.left && this.left.toArray(out, notation);
                 out.push(this.payload);
                 this.right && this.right.toArray(out, notation);
@@ -31,8 +31,13 @@ class Node {
     }
 
     rotateLeft(oldRoot) {
+        /* These error checks are probably unnecessary since class Node
+         * is used exclusively by class Tree
+         */
+        /* istanbul ignore if */
         if (!oldRoot)
             throw new Error('Cannot rotate a null node');
+        /* istanbul ignore if */
         if (!oldRoot.right)
             throw new Error('Cannot rotate left if node.right is null');
         let newRoot = oldRoot.right;
@@ -42,8 +47,10 @@ class Node {
     }
 
     rotateRight(oldRoot) {
+        /* istanbul ignore if */
         if (!oldRoot)
             throw new Error('Cannot rotate a null node');
+        /* istanbul ignore if */
         if (!oldRoot.left)
             throw new Error('Cannot rotate right if node.left is null');
         let newRoot = oldRoot.left;
@@ -68,6 +75,7 @@ class Node {
      * the left or right link above this node, accordingly.
      */
     rightBalance(atNode) {
+        /* istanbul ignore if */
         if (!atNode)
             throw new Error('Cannot right balance a null node');
         // if (!atNode.right || !atNode.right.left)
@@ -88,6 +96,13 @@ class Node {
                 //This requires a double rotation
                 let newRootNode = atNodeRight.left;
                 switch (newRootNode.balance) {
+                    /* Quite certain this is an impossible case because in order to get
+                     * here: 1) the root node must be out of AVL compliance; 2) root.right
+                     * must be left high, with a balanced left branch, immediately after
+                     * an insertion.  If this is the case, the tree was not AVL compliance
+                     * before the insertion.
+                     */
+                    /* istanbul ignore next */
                     case BALANCED:
                         atNode.balance = BALANCED;
                         atNodeRight.balance = BALANCED;
@@ -108,6 +123,7 @@ class Node {
     }
 
     leftBalance(atNode) {
+        /* istanbul ignore if */
         if (!atNode)
             throw new Error('Cannot left balance a null node');
         // if (!atNode.left || !atNode.left.right)
@@ -119,6 +135,7 @@ class Node {
                 atNode.balance = BALANCED;      //this node is balanced
                 atNodeLeft.balance = BALANCED; //as is new root node
                 return { taller: false, newRootNode: this.rotateRight(atNode) };
+            /* istanbul ignore next */
             case BALANCED:
                 throw new Error('Missed a balance operation. ' +
                     'This should never happen in a valid AVL Tree');
@@ -127,6 +144,13 @@ class Node {
                 //This requires a double rotation
                 let newRootNode = atNodeLeft.right;
                 switch (newRootNode.balance) {
+                    /* Quite certain this is an impossible case because in order to get
+                     * here: 1) the root node must be out of AVL compliance; 2) root.left
+                     * must be right high, with a balanced right branch, immediately after
+                     * an insertion.  If this is the case, the tree was not AVL compliance
+                     * before the insertion.
+                     */
+                    /* istanbul ignore next */
                     case BALANCED:
                         atNode.balance = BALANCED;
                         atNodeLeft.balance = BALANCED;
