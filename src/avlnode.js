@@ -1,27 +1,39 @@
-const LEFT_HIGH = "LEFT_HIGH";
-const BALANCED = "BALANCED";
-const RIGHT_HIGH = "RIGHT_HIGH";
+const Metrics = require('./avlmetrics');
+
+const LEFT_HIGH = 'LEFT_HIGH';
+const BALANCED = 'BALANCED';
+const RIGHT_HIGH = 'RIGHT_HIGH';
 
 class Node {
     constructor() {
         this.payload = null;
         this.left = null;
         this.right = null;
+        this.metrics = new Metrics();
+    }
+
+    getMetrics() {
+        let mine = this.metrics.counters;
+        const lm = this.left ? this.left.getMetrics() : {};
+        const rm = this.right ? this.right.getMetrics() : {};
+        Object.getOwnPropertyNames(lm).forEach(m => mine[m] ? mine[m] += lm[m] : mine[m] = lm[m]);
+        Object.getOwnPropertyNames(rm).forEach(m => mine[m] ? mine[m] += rm[m] : mine[m] = rm[m]);
+        return mine;
     }
 
     toArray(out, notation) {
         switch (notation) {
-            case "prefix":
+            case 'prefix':
                 out.push(this.payload);
                 this.left && this.left.toArray(out, notation);
                 this.right && this.right.toArray(out, notation);
                 break;
-            case "postfix":
+            case 'postfix':
                 this.left && this.left.toArray(out, notation);
                 this.right && this.right.toArray(out, notation);
                 out.push(this.payload);
                 break;
-            case "infix":
+            case 'infix':
             default:
                 this.left && this.left.toArray(out, notation);
                 out.push(this.payload);
@@ -31,6 +43,7 @@ class Node {
     }
 
     rotateLeft(oldRoot) {
+        oldRoot.metrics.increment('rotateLeft');
         /* These error checks are probably unnecessary since class Node
          * is used exclusively by class Tree
          */
@@ -47,6 +60,7 @@ class Node {
     }
 
     rotateRight(oldRoot) {
+        oldRoot.metrics.increment('rotateRight');
         /* istanbul ignore if */
         if (!oldRoot)
             throw new Error('Cannot rotate a null node');
@@ -75,6 +89,7 @@ class Node {
      * the left or right link above this node, accordingly.
      */
     rightBalance(atNode) {
+        atNode.metrics.increment('rightBalance');
         /* istanbul ignore if */
         if (!atNode)
             throw new Error('Cannot right balance a null node');
@@ -94,13 +109,7 @@ class Node {
                 //This requires a double rotation
                 let newRootNode = atNodeRight.left;
                 switch (newRootNode.balance) {
-                    /* Quite certain this is an impossible case because in order to get
-                     * here: 1) the root node must be out of AVL compliance; 2) root.right
-                     * must be left high, with a balanced left branch, immediately after
-                     * an insertion.  If this is the case, the tree was not AVL compliance
-                     * before the insertion.
-                     */
-                    /* istanbul ignore next */
+
                     case BALANCED:
                         atNode.balance = BALANCED;
                         atNodeRight.balance = BALANCED;
@@ -121,6 +130,7 @@ class Node {
     }
 
     leftBalance(atNode) {
+        atNode.metrics.increment('leftBalance');
         /* istanbul ignore if */
         if (!atNode)
             throw new Error('Cannot left balance a null node');
@@ -142,13 +152,6 @@ class Node {
                 //This requires a double rotation
                 let newRootNode = atNodeLeft.right;
                 switch (newRootNode.balance) {
-                    /* Quite certain this is an impossible case because in order to get
-                     * here: 1) the root node must be out of AVL compliance; 2) root.left
-                     * must be right high, with a balanced right branch, immediately after
-                     * an insertion.  If this is the case, the tree was not AVL compliance
-                     * before the insertion.
-                     */
-                    /* istanbul ignore next */
                     case BALANCED:
                         atNode.balance = BALANCED;
                         atNodeLeft.balance = BALANCED;
@@ -175,6 +178,7 @@ class Node {
         if (!this.payload) {
             this.payload = payload;
             this.balance = BALANCED;
+            this.metrics.increment('insertion');
             //Technically, the tree grew taller when adding this node to the tree.
             //For simplicity of coding, consider the tree to grow when we add the
             //payload to the empty node.  In this way, both new node adds, as well
@@ -186,6 +190,7 @@ class Node {
             if (!this.right)
                 this.right = new Node();
             let { taller } = this.right.add(payload);
+            this.metrics.increment('add');
             subtreeIsTaller = taller;
             if (subtreeIsTaller) {
                 //Just added a node to the right. If the tree grew taller then
@@ -218,6 +223,7 @@ class Node {
             if (!this.left)
                 this.left = new Node();
             let { taller } = this.left.add(payload);
+            this.metrics.increment('add');
             subtreeIsTaller = taller;
             if (subtreeIsTaller) {
                 //Subtree is taller after adding a node on the left.  If the old

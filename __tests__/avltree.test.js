@@ -38,7 +38,7 @@ test('it should rotate right', () => {
 /* DOUBLE ROTATIONS
  * ----------------
  */
-test('right balance when left high', () => {
+test('R balance, double rotation, left high new root', () => {
     let t = new Tree();
     t.add('b');
     t.add('a');
@@ -55,7 +55,7 @@ test('right balance when left high', () => {
 });
 
 /** in this test case, the node causing double rotation is right high */
-test('right balance when right high', () => {
+test('R balance, double rotation, right high new root', () => {
     let t = new Tree();
     t.add('b');
     t.add('a');
@@ -71,7 +71,20 @@ test('right balance when right high', () => {
     expect(apostfix).toStrictEqual(['a', 'b', 'd', 'f', 'e', 'c']);
 });
 
-test('left balance when right high', () => {
+test('R balance, double rotation, balanced new root', () => {
+    let t = new Tree();
+    t.add('a');
+    t.add('c');
+    t.add('b'); //rightBalance via double rotation
+    let ainfix = t.toArray();
+    expect(ainfix).toStrictEqual(['a', 'b', 'c']);
+    let aprefix = t.toArray({ notation: 'prefix' });
+    expect(aprefix).toStrictEqual(['b', 'a', 'c']);
+    let apostfix = t.toArray({ notation: 'postfix' });
+    expect(apostfix).toStrictEqual(['a', 'c', 'b']);
+});
+
+test('L balance, double rotation, right high new root', () => {
     let t = new Tree();
     t.add('e');
     t.add('f');
@@ -87,7 +100,7 @@ test('left balance when right high', () => {
     expect(apostfix).toStrictEqual(['a', 'b', 'd', 'f', 'e', 'c']);
 });
 
-test('left balance when left high', () => {
+test('L balance, double rotation, left high new root', () => {
     let t = new Tree();
     t.add('e');
     t.add('f');
@@ -102,3 +115,31 @@ test('left balance when left high', () => {
     let apostfix = t.toArray({ notation: 'postfix' });
     expect(apostfix).toStrictEqual(['a', 'c', 'b', 'f', 'e', 'd']);
 });
+
+test('L balance, double rotation, balanced new root', () => {
+    let t = new Tree();
+    t.add('c');
+    t.add('a');
+    t.add('b'); //rightBalance via double rotation
+    let ainfix = t.toArray();
+    expect(ainfix).toStrictEqual(['a', 'b', 'c']);
+    let aprefix = t.toArray({ notation: 'prefix' });
+    expect(aprefix).toStrictEqual(['b', 'a', 'c']);
+    let apostfix = t.toArray({ notation: 'postfix' });
+    expect(apostfix).toStrictEqual(['a', 'c', 'b']);
+});
+
+test('should be 3 inserts, 3 adds, and right balance with double rotation', () => {
+    let t = new Tree();
+    t.add('a');
+    t.add('c');
+    t.add('b'); //rightBalance via double rotation
+    let m = t.metrics();
+    expect(m.insertion).toEqual(3);
+    expect(m.add).toEqual(3);
+    expect(m.rightBalance).toEqual(1);
+    expect(m.leftBalance).toBeUndefined();
+    expect(m.rotateLeft).toEqual(1);
+    expect(m.rotateRight).toEqual(1);
+});
+

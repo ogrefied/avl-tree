@@ -16,6 +16,10 @@ class Tree {
         this.root.toArray(out, options.notation);
         return out;
     }
+
+    metrics() {
+        return this.root.getMetrics();
+    }
 }
 
 module.exports = Tree;
