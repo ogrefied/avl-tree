@@ -105,6 +105,45 @@ class Node {
         }
     }
 
+    leftBalance(atNode) {
+        if (!atNode)
+            throw new Error('Cannot left balance a null node');
+        // if (!atNode.left || !atNode.left.right)
+        //     throw new Error('Cannot left balance this tree');
+        let atNodeLeft = atNode.left;
+        switch (atNodeLeft.balance) {
+            case LEFT_HIGH:
+                //This requires a right rotation.  After the rotation...
+                atNode.balance = BALANCED;      //this node is balanced
+                atNodeLeft.balance = BALANCED; //as is new root node
+                return { taller: false, newRootNode: this.rotateRight(atNode) };
+            case BALANCED:
+                throw new Error('Missed a balance operation. ' +
+                    'This should never happen in a valid AVL Tree');
+                break;
+            case RIGHT_HIGH:
+                //This requires a double rotation
+                let newRootNode = atNodeLeft.right;
+                switch (newRootNode.balance) {
+                    case BALANCED:
+                        atNode.balance = BALANCED;
+                        atNodeLeft.balance = BALANCED;
+                        break;
+                    case LEFT_HIGH:
+                        atNode.balance = RIGHT_HIGH;
+                        atNodeLeft.balance = BALANCED;
+                        break;
+                    case RIGHT_HIGH:
+                        atNode.balance = BALANCED;
+                        atNodeLeft.balance = LEFT_HIGH;
+                        break;
+                }
+                newRootNode.balance = BALANCED;
+                atNode.left = this.rotateLeft(atNodeLeft);
+                return { taller: false, newRootNode: this.rotateRight(atNode) };
+        }
+    }
+
     add(payload) {
         let thisTreeIsTaller = false;//whether this insertion grows the depth of this tree
         let subtreeIsTaller = false; //whether this insertion grows the depth of a subtree
@@ -163,8 +202,6 @@ class Node {
                     case LEFT_HIGH:
                         //Need to rebalance to remain compliant with AVL Tree design
                         ({ taller, newRootNode } = this.leftBalance(this));
-                        if (newRootNode)
-                            this.left = newRootNode;
                         thisTreeIsTaller = taller;
                         break;
                     case BALANCED:
