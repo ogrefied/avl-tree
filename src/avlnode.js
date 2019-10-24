@@ -189,8 +189,13 @@ class Node {
         if (payload > this.payload) {   //add right
             if (!this.right)
                 this.right = new Node();
-            let { taller } = this.right.add(payload);
+            let taller;
+            ({ taller, newRootNode } = this.right.add(payload));
             this.metrics.increment('add');
+            if (newRootNode) {
+                this.right = newRootNode;
+                newRootNode = null;
+            }
             subtreeIsTaller = taller;
             if (subtreeIsTaller) {
                 //Just added a node to the right. If the tree grew taller then
@@ -222,8 +227,13 @@ class Node {
         } else if (payload < this.payload) {    //add left
             if (!this.left)
                 this.left = new Node();
-            let { taller } = this.left.add(payload);
+            let taller;
+            ({ taller, newRootNode } = this.left.add(payload));
             this.metrics.increment('add');
+            if (newRootNode) {
+                this.right = newRootNode;
+                newRootNode = null;
+            }
             subtreeIsTaller = taller;
             if (subtreeIsTaller) {
                 //Subtree is taller after adding a node on the left.  If the old
