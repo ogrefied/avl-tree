@@ -231,7 +231,7 @@ class Node {
             ({ taller, newRootNode } = this.left.add(payload));
             this.metrics.increment('add');
             if (newRootNode) {
-                this.right = newRootNode;
+                this.left = newRootNode;
                 newRootNode = null;
             }
             subtreeIsTaller = taller;
