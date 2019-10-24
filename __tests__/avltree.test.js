@@ -143,3 +143,32 @@ test('should be 3 inserts, 3 adds, and right balance with double rotation', () =
     expect(m.rotateRight).toEqual(1);
 });
 
+test('double rotation at non-root node on right', () => {
+    let t = new Tree();
+    t.add('b');
+    t.add('a');
+    t.add('c');
+    t.add('e');
+    t.add('d'); //double rotation under root.right
+    let ainfix = t.toArray();
+    expect(ainfix).toStrictEqual(['a', 'b', 'c', 'd', 'e']);
+    let aprefix = t.toArray({ notation: 'prefix' });
+    expect(aprefix).toStrictEqual(['b', 'a', 'd', 'c', 'e']);
+    let apostfix = t.toArray({ notation: 'postfix' });
+    expect(apostfix).toStrictEqual(['a', 'c', 'e', 'd', 'b']);
+});
+
+test('double rotation at non-root node on left', () => {
+    let t = new Tree();
+    t.add('d');
+    t.add('e');
+    t.add('c');
+    t.add('a');
+    t.add('b'); //double rotation under root.left
+    let ainfix = t.toArray();
+    expect(ainfix).toStrictEqual(['a', 'b', 'c', 'd', 'e']);
+    let aprefix = t.toArray({ notation: 'prefix' });
+    expect(aprefix).toStrictEqual(['d', 'b', 'a', 'c', 'e']);
+    let apostfix = t.toArray({ notation: 'postfix' });
+    expect(apostfix).toStrictEqual(['a', 'c', 'b', 'e', 'd']);
+});
