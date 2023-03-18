@@ -1,11 +1,11 @@
 import {
-    AvlTreeBalanceLeftOnEmptyNode,
-    AvlTreeBalanceRightOnEmptyNode,
+    AvlTreeBalanceLeftOnEmptyNodeError,
+    AvlTreeBalanceRightOnEmptyNodeError,
     AvlTreeDuplicateKeyError,
     AvlTreeEmptyPayloadError,
-    AvlTreeRotateLeftWithoutRightChild,
-    AvlTreeRotateRightWithoutLeftChild,
-    AvlTreeRotationOnEmptyNode,
+    AvlTreeRotateLeftWithoutRightChildError,
+    AvlTreeRotateRightWithoutLeftChildError,
+    AvlTreeRotationOnEmptyNodeError,
     AvlTreeTypeMismatchError,
 } from '../src/avlerrors';
 import { Metrics } from './avlmetrics';
@@ -59,10 +59,10 @@ export class Node {
          */
         /* istanbul ignore if */
         if (!oldRoot)
-            throw new AvlTreeRotationOnEmptyNode();
+            throw new AvlTreeRotationOnEmptyNodeError();
         /* istanbul ignore if */
         if (!oldRoot.right)
-            throw new AvlTreeRotateLeftWithoutRightChild(oldRoot.payload);
+            throw new AvlTreeRotateLeftWithoutRightChildError(oldRoot.payload);
         oldRoot.metrics.increment('rotateLeft');
         let newRoot = oldRoot.right;
         oldRoot.right = newRoot.left;
@@ -74,10 +74,10 @@ export class Node {
         oldRoot.metrics.increment('rotateRight');
         /* istanbul ignore if */
         if (!oldRoot)
-            throw new AvlTreeRotationOnEmptyNode();
+            throw new AvlTreeRotationOnEmptyNodeError();
         /* istanbul ignore if */
         if (!oldRoot.left)
-            throw new AvlTreeRotateRightWithoutLeftChild(oldRoot.payload);
+            throw new AvlTreeRotateRightWithoutLeftChildError(oldRoot.payload);
         let newRoot = oldRoot.left;
         oldRoot.left = newRoot.right;
         newRoot.right = oldRoot;
@@ -103,7 +103,7 @@ export class Node {
         atNode.metrics.increment('rightBalance');
         /* istanbul ignore if */
         if (!atNode)
-            throw new AvlTreeBalanceRightOnEmptyNode();
+            throw new AvlTreeBalanceRightOnEmptyNodeError();
         let atNodeRight = atNode.right;
         switch (atNodeRight.balance) {
             case RIGHT_HIGH:
@@ -144,7 +144,7 @@ export class Node {
         atNode.metrics.increment('leftBalance');
         /* istanbul ignore if */
         if (!atNode)
-            throw new AvlTreeBalanceLeftOnEmptyNode();
+            throw new AvlTreeBalanceLeftOnEmptyNodeError();
         // if (!atNode.left || !atNode.left.right)
         //     throw new Error('Cannot left balance this tree');
         let atNodeLeft = atNode.left;

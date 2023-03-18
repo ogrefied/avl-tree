@@ -9,13 +9,13 @@ export class AvlTreeError {
     }
 }
 
-export class AvlTreeBalanceLeftOnEmptyNode extends AvlTreeError {
+export class AvlTreeBalanceLeftOnEmptyNodeError extends AvlTreeError {
     constructor() {
         super(`Cannot left balance a null node`);
     }
 }
 
-export class AvlTreeBalanceRightOnEmptyNode extends AvlTreeError {
+export class AvlTreeBalanceRightOnEmptyNodeError extends AvlTreeError {
     constructor() {
         super(`Cannot right balance a null node`);
     }
@@ -39,19 +39,19 @@ export class AvlTreeEmptyPayloadError extends AvlTreeError {
     }
 }
 
-export class AvlTreeRotateLeftWithoutRightChild extends AvlTreeError {
+export class AvlTreeRotateLeftWithoutRightChildError extends AvlTreeError {
     constructor(nodePayload) {
         super(`Rotation Error: Cannot rotate left without right-hand child at node: ${nodePayload}`);
     }
 }
 
-export class AvlTreeRotateRightWithoutLeftChild extends AvlTreeError {
+export class AvlTreeRotateRightWithoutLeftChildError extends AvlTreeError {
     constructor(nodePayload) {
         super(`Rotation Error: Cannot rotate right without left-hand child at node: ${nodePayload}`);
     }
 }
 
-export class AvlTreeRotationOnEmptyNode extends AvlTreeError {
+export class AvlTreeRotationOnEmptyNodeError extends AvlTreeError {
     constructor() {
         super(`Cannot rotate a null node`);
     }
