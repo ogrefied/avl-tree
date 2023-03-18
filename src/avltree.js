@@ -1,6 +1,6 @@
-const Node = require('./avlnode');
+import { Node } from './avlnode';
 
-class Tree {
+export class Tree {
     constructor(asType = Node) {
         this.root = new asType();
     }
@@ -29,5 +29,3 @@ class Tree {
         return this.root.getMetrics();
     }
 }
-
-module.exports = Tree;
