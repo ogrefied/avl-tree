@@ -6,6 +6,40 @@ test('throw error on duplicate key', () => {
     expect(() => t.add('a')).toThrow('Adding multiple values with the same key not implemented.');
 });
 
+/* CREATION
+ */
+describe('AVL Tree creation', () => {
+    test('should create an empty tree on construction', () => {
+        let tree = new Tree();
+        expect(tree.root).toBeTruthy();
+        expect(tree.root.payload).toBe(null);
+        expect(tree.root.left).toBe(null);
+        expect(tree.root.right).toBe(null);
+        expect(tree.root.balance).toBe('BALANCED');
+    });
+    test('should return an empty tree when a source array is empty', () => {
+        let tree = Tree.fromArray([]);
+        expect(tree.root).toBeTruthy();
+        expect(tree.root.payload).toBe(null);
+        expect(tree.root.left).toBe(null);
+        expect(tree.root.right).toBe(null);
+        expect(tree.root.balance).toBe('BALANCED');
+    });
+    test('should return proper insertion order when created from an array', () => {
+        let tree = Tree.fromArray(['a', 'b', 'c']);
+        expect(tree.toArray({ notation: 'infix' })).toStrictEqual(['a', 'b', 'c']);
+        expect(tree.toArray({ notation: 'prefix' })).toStrictEqual(['b', 'a', 'c']);
+        expect(tree.toArray({ notation: 'postfix' })).toStrictEqual(['a', 'c', 'b']);
+    
+    });
+    test('should throw an error when a source is not an array', () => {
+        expect(() => Tree.fromArray('x')).toThrow('Cannot create tree from non-array source');
+        expect(() => Tree.fromArray(1)).toThrow('Cannot create tree from non-array source');
+        expect(() => Tree.fromArray(true)).toThrow('Cannot create tree from non-array source');
+        expect(() => Tree.fromArray({})).toThrow('Cannot create tree from non-array source');
+    });
+});
+
 /* SINGLE ROTATIONS
  * ----------------
  */

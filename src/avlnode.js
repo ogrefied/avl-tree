@@ -9,6 +9,7 @@ class Node {
         this.payload = null;
         this.left = null;
         this.right = null;
+        this.balance = BALANCED;
         this.metrics = new Metrics();
     }
 
