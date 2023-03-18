@@ -17,6 +17,14 @@ class Tree {
         return out;
     }
 
+    static fromArray(source) {
+        if (!Array.isArray(source))
+            throw new Error(`Cannot create tree from non-array source`);
+        let tree = new Tree();
+        source.forEach(element => tree.add(element));
+        return tree;
+    }
+
     metrics() {
         return this.root.getMetrics();
     }
