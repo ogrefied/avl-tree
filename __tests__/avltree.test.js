@@ -27,8 +27,10 @@ describe('AVL Tree creation', () => {
     });
     test('should return proper insertion order when created from an array', () => {
         let tree = Tree.fromArray(['a', 'b', 'c']);
-        let infix = tree.toArray();
-        expect(infix).toStrictEqual(['a', 'b', 'c']);
+        expect(tree.toArray({ notation: 'infix' })).toStrictEqual(['a', 'b', 'c']);
+        expect(tree.toArray({ notation: 'prefix' })).toStrictEqual(['b', 'a', 'c']);
+        expect(tree.toArray({ notation: 'postfix' })).toStrictEqual(['a', 'c', 'b']);
+    
     });
     test('should throw an error when a source is not an array', () => {
         expect(() => Tree.fromArray('x')).toThrow('Cannot create tree from non-array source');
