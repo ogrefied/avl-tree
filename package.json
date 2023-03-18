@@ -1,13 +1,13 @@
 {
     "name": "@ogrefied/avl-tree",
-    "version": "0.5.0",
+    "version": "0.5.1",
     "description": "Implements a self-balancing binary tree",
     "main": "index.js",
     "scripts": {
         "test": "jest"
     },
     "devDependencies": {
-        "jest": "~24.9.0"
+        "jest": "^29.5.0"
     },
     "keywords": [
         "avltree",
