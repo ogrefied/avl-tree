@@ -16,6 +16,14 @@ export class Tree {
             this.root = newRootNode;
     }
 
+    depth() {
+        let metrics = new Metrics();
+        metrics.initialize('depth');
+        metrics.initialize('searchLeft');
+        metrics.initialize('searchRight');
+        return this.root.depth(metrics).counters;
+    }
+
     find(value) {
         if (value == null)
             throw new AvlTreeSearchValueEmptyError();

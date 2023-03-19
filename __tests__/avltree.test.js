@@ -15,7 +15,7 @@ test('throw error on duplicate key', () => {
 
 describe('AVL Tree creation', () => {
     test('should create an empty tree on construction', () => {
-        let tree = new Tree();
+        const tree = new Tree();
         expect(tree.root).toBeTruthy();
         expect(tree.root.payload).toBe(null);
         expect(tree.root.left).toBe(null);
@@ -23,7 +23,7 @@ describe('AVL Tree creation', () => {
         expect(tree.root.balance).toBe('BALANCED');
     });
     test('should return an empty tree when a source array is empty', () => {
-        let tree = Tree.fromArray([]);
+        const tree = Tree.fromArray([]);
         expect(tree.root).toBeTruthy();
         expect(tree.root.payload).toBe(null);
         expect(tree.root.left).toBe(null);
@@ -31,7 +31,7 @@ describe('AVL Tree creation', () => {
         expect(tree.root.balance).toBe('BALANCED');
     });
     test('should return proper insertion order when created from an array', () => {
-        let tree = Tree.fromArray(['a', 'b', 'c']);
+        const tree = Tree.fromArray(['a', 'b', 'c']);
         expect(tree.toArray({ notation: 'infix' })).toStrictEqual(['a', 'b', 'c']);
         expect(tree.toArray({ notation: 'prefix' })).toStrictEqual(['b', 'a', 'c']);
         expect(tree.toArray({ notation: 'postfix' })).toStrictEqual(['a', 'c', 'b']);
@@ -45,20 +45,20 @@ describe('AVL Tree creation', () => {
 });
 describe('AVL Tree insertions', () => {
     test('should throw an error when a mismatched type is inserted', () => {
-        let tree = new Tree();
+        const tree = new Tree();
         tree.add('a');
         expect(() => tree.add(1)).toThrow(new AvlTreeTypeMismatchError('number', 'string').toString());
         expect(() => tree.add({})).toThrow(new AvlTreeTypeMismatchError('object', 'string').toString());
     });
     test('should throw an error when a nullish value is inserted', () => {
-        let tree = new Tree();
+        const tree = new Tree();
         expect(() => tree.add(null)).toThrow(new AvlTreeEmptyPayloadError().toString());
         expect(() => tree.add(undefined)).toThrow(new AvlTreeEmptyPayloadError().toString());
     });
 
     // SINGLE ROTATIONS
     test('should result in a left rotation when added in sequence order', () => {
-        let tree = new Tree();
+        const tree = new Tree();
         tree.add('a');
         tree.add('b');
         tree.add('c');
@@ -75,7 +75,7 @@ describe('AVL Tree insertions', () => {
         expect(metrics.leftBalance).toBeUndefined();
     });
     test('should result in a right rotation when added in reverse order', () => {
-        let tree = new Tree();
+        const tree = new Tree();
         tree.add('c');
         tree.add('b');
         tree.add('a');
@@ -94,7 +94,7 @@ describe('AVL Tree insertions', () => {
 
     // DOUBLE ROTATIONS
     test('should right balance with a double rotation when the new root was left high after the insertion', () => {
-        let tree = new Tree();
+        const tree = new Tree();
         tree.add('b');
         tree.add('a');
         tree.add('e');
@@ -114,7 +114,7 @@ describe('AVL Tree insertions', () => {
         expect(metrics.leftBalance).toBeUndefined();
     });
     test('should right balance with a double rotation when the new root was right high after the insertion', () => {
-        let tree = new Tree();
+        const tree = new Tree();
         tree.add('b');
         tree.add('a');
         tree.add('e');
@@ -134,7 +134,7 @@ describe('AVL Tree insertions', () => {
         expect(metrics.leftBalance).toBeUndefined();
     });
     test('should right balance with a double rotation when the new root is balanced after the insertion', () => {
-        let tree = new Tree();
+        const tree = new Tree();
         tree.add('a');
         tree.add('c');
         tree.add('b'); //rightBalance via double rotation
@@ -151,7 +151,7 @@ describe('AVL Tree insertions', () => {
         expect(metrics.leftBalance).toBeUndefined();
     });
     test('should left balance with a double rotation when the new root is right high after the insertion', () => {
-        let tree = new Tree();
+        const tree = new Tree();
         tree.add('e');
         tree.add('f');
         tree.add('b');
@@ -171,7 +171,7 @@ describe('AVL Tree insertions', () => {
         expect(metrics.leftBalance).toEqual(1);
     });
     test('should left balance with a double rotation when the new root is left high after the insertion', () => {
-        let tree = new Tree();
+        const tree = new Tree();
         tree.add('e');
         tree.add('f');
         tree.add('b');
@@ -191,7 +191,7 @@ describe('AVL Tree insertions', () => {
         expect(metrics.leftBalance).toEqual(1);
     });
     test('should left balance with a double rotation when the new root is balanced after the insertion', () => {
-        let tree = new Tree();
+        const tree = new Tree();
         tree.add('c');
         tree.add('a');
         tree.add('b'); //rightBalance via double rotation
@@ -208,7 +208,7 @@ describe('AVL Tree insertions', () => {
         expect(metrics.leftBalance).toEqual(1);
     });
     test('should right balance with a double rotation on a non-root node', () => {
-        let tree = new Tree();
+        const tree = new Tree();
         tree.add('b');
         tree.add('a');
         tree.add('c');
@@ -227,7 +227,7 @@ describe('AVL Tree insertions', () => {
         expect(metrics.leftBalance).toBeUndefined();
     });
     test('should left balance with a double rotation on a non-root node', () => {
-        let tree = new Tree();
+        const tree = new Tree();
         tree.add('d');
         tree.add('e');
         tree.add('c');
@@ -249,7 +249,7 @@ describe('AVL Tree insertions', () => {
 
 describe('AVL Tree output to array', () => {
     test('should print in infix notation by default', () => {
-        let tree = new Tree();
+        const tree = new Tree();
         tree.add('d');
         tree.add('e');
         tree.add('c');
@@ -271,13 +271,13 @@ describe('AVL Tree output to array', () => {
 
 describe('AVL Tree search', () => {
     test('should throw if the search value is null or undefined', () => {
-        let tree = new Tree();
+        const tree = new Tree();
         tree.add('a');
         expect(() => tree.find(null)).toThrow(new AvlTreeSearchValueEmptyError().toString());
         expect(() => tree.find(undefined)).toThrow(new AvlTreeSearchValueEmptyError().toString());
     });
     test('should return a node that matches the search value exactly', () => {
-        let tree = Tree.fromArray(['a', 'b', 'c', 'd', 'e', 'f']);
+        const tree = Tree.fromArray(['a', 'b', 'c', 'd', 'e', 'f']);
         const { node, metrics } = tree.find('c');
         expect(node.payload).toEqual('c');
         expect(metrics.searchLeft).toEqual(1);
@@ -285,7 +285,7 @@ describe('AVL Tree search', () => {
         expect(metrics.depth).toEqual(2);
     });
     test('should return null if the search term is not found', () => {
-        let tree = Tree.fromArray(['a', 'c', 'e', 'g', 'i', 'k']);
+        const tree = Tree.fromArray(['a', 'c', 'e', 'g', 'i', 'k']);
         const { node: nodeM, metrics: metricsM } = tree.find('m');
         expect(nodeM).toEqual(null);
         expect(metricsM.searchLeft).toBeUndefined();
@@ -296,5 +296,43 @@ describe('AVL Tree search', () => {
         expect(metricsJ.searchLeft).toEqual(1);
         expect(metricsJ.searchRight).toEqual(2);
         expect(metricsJ.depth).toEqual(3);
+    });
+});
+
+describe('AVL Tree depth', () => {
+    test('should be zero for a new tree', () => {
+        const tree = new Tree();
+        const { depth, searchLeft, searchRight } = tree.depth();
+        expect(depth).toEqual(0);
+        expect(searchLeft).toEqual(0);
+        expect(searchRight).toEqual(0);
+    });
+    test('should be one for a tree with a single node', () => {
+        const tree = Tree.fromArray(['a']);
+        const { depth, searchLeft, searchRight } = tree.depth();
+        expect(depth).toEqual(1);
+        expect(searchLeft).toEqual(0);
+        expect(searchRight).toEqual(0);
+    });
+    test('should be two for a balanced tree with three nodes', () => {
+        const tree = Tree.fromArray(['b', 'a', 'c']);
+        const { depth, searchLeft, searchRight } = tree.depth();
+        expect(depth).toEqual(2);
+        expect(searchLeft).toEqual(1);
+        expect(searchRight).toEqual(0);
+    });
+    test('should only result in depth-1 searches when the tree is left high', () => {
+        const tree = Tree.fromArray(['m', 'i', 'p', 'e', 'j']);
+        const { depth, searchLeft, searchRight } = tree.depth();
+        expect(depth).toEqual(3);
+        expect(searchLeft).toEqual(2);
+        expect(searchRight).toEqual(0);
+    });
+    test('should only result in depth-1 searches when the tree is right high', () => {
+        const tree = Tree.fromArray(['m', 'i', 'p', 'o', 't']);
+        const { depth, searchLeft, searchRight } = tree.depth();
+        expect(depth).toEqual(3);
+        expect(searchLeft).toEqual(1);
+        expect(searchRight).toEqual(1);
     });
 });

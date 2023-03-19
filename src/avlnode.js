@@ -23,6 +23,30 @@ export class Node {
         this.metrics = new Metrics();
     }
 
+    depth(callMetrics) {
+        if (this.balance === RIGHT_HIGH) {
+            callMetrics.increment('depth');
+            callMetrics.increment('searchRight');
+            this.metrics.increment('searchRight');
+            return this.right.depth(callMetrics);
+        } else if (this.balance === LEFT_HIGH) {
+            callMetrics.increment('depth');
+            callMetrics.increment('searchLeft');
+            this.metrics.increment('searchLeft');
+            return this.left.depth(callMetrics);
+        }
+        if (this.left == null && this.right == null) {
+            if (this.payload != null) {
+                callMetrics.increment('depth');
+            }
+            return callMetrics;
+        }
+        callMetrics.increment('depth');
+        callMetrics.increment('searchLeft');
+        this.metrics.increment('searchLeft');
+        return this.left.depth(callMetrics);
+    }
+
     getMetrics() {
         let all = { ...this.metrics.counters };
         const lm = this.left ? this.left.getMetrics() : {};
