@@ -24,12 +24,12 @@ export class Node {
     }
 
     getMetrics() {
-        let mine = {...this.metrics.counters};
+        let all = { ...this.metrics.counters };
         const lm = this.left ? this.left.getMetrics() : {};
         const rm = this.right ? this.right.getMetrics() : {};
-        Object.getOwnPropertyNames(lm).forEach(m => mine[m] ? mine[m] += lm[m] : mine[m] = lm[m]);
-        Object.getOwnPropertyNames(rm).forEach(m => mine[m] ? mine[m] += rm[m] : mine[m] = rm[m]);
-        return mine;
+        Object.getOwnPropertyNames(lm).forEach(m => all[m] ? all[m] += lm[m] : all[m] = lm[m]);
+        Object.getOwnPropertyNames(rm).forEach(m => all[m] ? all[m] += rm[m] : all[m] = rm[m]);
+        return all;
     }
 
     toArray(out, notation) {
@@ -207,8 +207,8 @@ export class Node {
             if (!this.right)
                 this.right = new Node();
             let taller;
+            this.metrics.increment('addRight');
             ({ taller, newRootNode } = this.right.add(payload));
-            this.metrics.increment('add');
             if (newRootNode) {
                 this.right = newRootNode;
                 newRootNode = null;
@@ -245,8 +245,8 @@ export class Node {
             if (!this.left)
                 this.left = new Node();
             let taller;
+            this.metrics.increment('addLeft');
             ({ taller, newRootNode } = this.left.add(payload));
-            this.metrics.increment('add');
             if (newRootNode) {
                 this.left = newRootNode;
                 newRootNode = null;
@@ -285,5 +285,16 @@ export class Node {
             taller: thisTreeIsTaller,
             newRootNode
         }
+    }
+
+    find(value) {
+        if (this.payload === value)
+            return this;
+        if (value < this.payload) {
+            this.metrics.increment('searchLeft');
+            return this.left.find(value);
+        }
+        this.metrics.increment('searchRight');
+        return this.right.find(value);
     }
 }

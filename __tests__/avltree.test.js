@@ -64,11 +64,14 @@ describe('AVL Tree insertions', () => {
         expect(tree.toArray({ notation: 'infix' })).toStrictEqual(['a', 'b', 'c']);
         expect(tree.toArray({ notation: 'prefix' })).toStrictEqual(['b', 'a', 'c']);
         expect(tree.toArray({ notation: 'postfix' })).toStrictEqual(['a', 'c', 'b']);
-        expect(tree.metrics().insertion).toEqual(3);
-        expect(tree.metrics().rotateLeft).toEqual(1);
-        expect(tree.metrics().rightBalance).toEqual(1);
-        expect(tree.metrics().rotateRight).toBeUndefined();
-        expect(tree.metrics().leftBalance).toBeUndefined();
+        const metrics = tree.metrics();
+        expect(metrics.addLeft).toBeUndefined();
+        expect(metrics.addRight).toEqual(3); // 2 right a, 1 right of b
+        expect(metrics.insertion).toEqual(3);
+        expect(metrics.rotateLeft).toEqual(1);
+        expect(metrics.rightBalance).toEqual(1);
+        expect(metrics.rotateRight).toBeUndefined();
+        expect(metrics.leftBalance).toBeUndefined();
     });
     test('should result in a right rotation when added in reverse order', () => {
         let tree = new Tree();
@@ -78,11 +81,14 @@ describe('AVL Tree insertions', () => {
         expect(tree.toArray({ notation: 'infix' })).toStrictEqual(['a', 'b', 'c']);
         expect(tree.toArray({ notation: 'prefix' })).toStrictEqual(['b', 'a', 'c']);
         expect(tree.toArray({ notation: 'postfix' })).toStrictEqual(['a', 'c', 'b']);
-        expect(tree.metrics().insertion).toEqual(3);
-        expect(tree.metrics().rotateLeft).toBeUndefined();
-        expect(tree.metrics().rightBalance).toBeUndefined();
-        expect(tree.metrics().rotateRight).toEqual(1);
-        expect(tree.metrics().leftBalance).toEqual(1);
+        const metrics = tree.metrics();
+        expect(metrics.addLeft).toEqual(3); // 2 left of c, 1 left of b
+        expect(metrics.addRight).toBeUndefined();
+        expect(metrics.insertion).toEqual(3);
+        expect(metrics.rotateLeft).toBeUndefined();
+        expect(metrics.rightBalance).toBeUndefined();
+        expect(metrics.rotateRight).toEqual(1);
+        expect(metrics.leftBalance).toEqual(1);
     });
 
     // DOUBLE ROTATIONS
@@ -97,11 +103,14 @@ describe('AVL Tree insertions', () => {
         expect(tree.toArray({ notation: 'infix' })).toStrictEqual(['a', 'b', 'c', 'd', 'e', 'f']);
         expect(tree.toArray({ notation: 'prefix' })).toStrictEqual(['d', 'b', 'a', 'c', 'e', 'f']);
         expect(tree.toArray({ notation: 'postfix' })).toStrictEqual(['a', 'c', 'b', 'f', 'e', 'd']);
-        expect(tree.metrics().insertion).toEqual(6);
-        expect(tree.metrics().rotateLeft).toEqual(1);
-        expect(tree.metrics().rightBalance).toEqual(1);
-        expect(tree.metrics().rotateRight).toEqual(1);
-        expect(tree.metrics().leftBalance).toBeUndefined();
+        const metrics = tree.metrics();
+        expect(metrics.addLeft).toEqual(4);
+        expect(metrics.addRight).toEqual(5);
+        expect(metrics.insertion).toEqual(6);
+        expect(metrics.rotateLeft).toEqual(1);
+        expect(metrics.rightBalance).toEqual(1);
+        expect(metrics.rotateRight).toEqual(1);
+        expect(metrics.leftBalance).toBeUndefined();
     });
     test('should right balance with a double rotation when the new root was right high after the insertion', () => {
         let tree = new Tree();
@@ -114,11 +123,14 @@ describe('AVL Tree insertions', () => {
         expect(tree.toArray({ notation: 'infix' })).toStrictEqual(['a', 'b', 'c', 'd', 'e', 'f']);
         expect(tree.toArray({ notation: 'prefix' })).toStrictEqual(['c', 'b', 'a', 'e', 'd', 'f']);
         expect(tree.toArray({ notation: 'postfix' })).toStrictEqual(['a', 'b', 'd', 'f', 'e', 'c']);
-        expect(tree.metrics().insertion).toEqual(6);
-        expect(tree.metrics().rotateLeft).toEqual(1);
-        expect(tree.metrics().rightBalance).toEqual(1);
-        expect(tree.metrics().rotateRight).toEqual(1);
-        expect(tree.metrics().leftBalance).toBeUndefined();
+        const metrics = tree.metrics();
+        expect(metrics.addLeft).toEqual(3);
+        expect(metrics.addRight).toEqual(6);
+        expect(metrics.insertion).toEqual(6);
+        expect(metrics.rotateLeft).toEqual(1);
+        expect(metrics.rightBalance).toEqual(1);
+        expect(metrics.rotateRight).toEqual(1);
+        expect(metrics.leftBalance).toBeUndefined();
     });
     test('should right balance with a double rotation when the new root is balanced after the insertion', () => {
         let tree = new Tree();
@@ -128,11 +140,14 @@ describe('AVL Tree insertions', () => {
         expect(tree.toArray({ notation: 'infix' })).toStrictEqual(['a', 'b', 'c']);
         expect(tree.toArray({ notation: 'prefix' })).toStrictEqual(['b', 'a', 'c']);
         expect(tree.toArray({ notation: 'postfix' })).toStrictEqual(['a', 'c', 'b']);
-        expect(tree.metrics().insertion).toEqual(3);
-        expect(tree.metrics().rotateLeft).toEqual(1);
-        expect(tree.metrics().rightBalance).toEqual(1);
-        expect(tree.metrics().rotateRight).toEqual(1);
-        expect(tree.metrics().leftBalance).toBeUndefined();
+        const metrics = tree.metrics();
+        expect(metrics.addLeft).toEqual(1);
+        expect(metrics.addRight).toEqual(2);
+        expect(metrics.insertion).toEqual(3);
+        expect(metrics.rotateLeft).toEqual(1);
+        expect(metrics.rightBalance).toEqual(1);
+        expect(metrics.rotateRight).toEqual(1);
+        expect(metrics.leftBalance).toBeUndefined();
     });
     test('should left balance with a double rotation when the new root is right high after the insertion', () => {
         let tree = new Tree();
@@ -145,11 +160,14 @@ describe('AVL Tree insertions', () => {
         expect(tree.toArray({ notation: 'infix' })).toStrictEqual(['a', 'b', 'c', 'd', 'e', 'f']);
         expect(tree.toArray({ notation: 'prefix' })).toStrictEqual(['c', 'b', 'a', 'e', 'd', 'f']);
         expect(tree.toArray({ notation: 'postfix' })).toStrictEqual(['a', 'b', 'd', 'f', 'e', 'c']);
-        expect(tree.metrics().insertion).toEqual(6);
-        expect(tree.metrics().rotateLeft).toEqual(1);
-        expect(tree.metrics().rightBalance).toBeUndefined();
-        expect(tree.metrics().rotateRight).toEqual(1);
-        expect(tree.metrics().leftBalance).toEqual(1);
+        const metrics = tree.metrics();
+        expect(metrics.addLeft).toEqual(5);
+        expect(metrics.addRight).toEqual(4);
+        expect(metrics.insertion).toEqual(6);
+        expect(metrics.rotateLeft).toEqual(1);
+        expect(metrics.rightBalance).toBeUndefined();
+        expect(metrics.rotateRight).toEqual(1);
+        expect(metrics.leftBalance).toEqual(1);
     });
     test('should left balance with a double rotation when the new root is left high after the insertion', () => {
         let tree = new Tree();
@@ -162,11 +180,14 @@ describe('AVL Tree insertions', () => {
         expect(tree.toArray({ notation: 'infix' })).toStrictEqual(['a', 'b', 'c', 'd', 'e', 'f']);
         expect(tree.toArray({ notation: 'prefix' })).toStrictEqual(['d', 'b', 'a', 'c', 'e', 'f']);
         expect(tree.toArray({ notation: 'postfix' })).toStrictEqual(['a', 'c', 'b', 'f', 'e', 'd']);
-        expect(tree.metrics().insertion).toEqual(6);
-        expect(tree.metrics().rotateLeft).toEqual(1);
-        expect(tree.metrics().rightBalance).toBeUndefined();
-        expect(tree.metrics().rotateRight).toEqual(1);
-        expect(tree.metrics().leftBalance).toEqual(1);
+        const metrics = tree.metrics();
+        expect(metrics.addLeft).toEqual(6);
+        expect(metrics.addRight).toEqual(3);
+        expect(metrics.insertion).toEqual(6);
+        expect(metrics.rotateLeft).toEqual(1);
+        expect(metrics.rightBalance).toBeUndefined();
+        expect(metrics.rotateRight).toEqual(1);
+        expect(metrics.leftBalance).toEqual(1);
     });
     test('should left balance with a double rotation when the new root is balanced after the insertion', () => {
         let tree = new Tree();
@@ -176,11 +197,14 @@ describe('AVL Tree insertions', () => {
         expect(tree.toArray({ notation: 'infix' })).toStrictEqual(['a', 'b', 'c']);
         expect(tree.toArray({ notation: 'prefix' })).toStrictEqual(['b', 'a', 'c']);
         expect(tree.toArray({ notation: 'postfix' })).toStrictEqual(['a', 'c', 'b']);
-        expect(tree.metrics().insertion).toEqual(3);
-        expect(tree.metrics().rotateLeft).toEqual(1);
-        expect(tree.metrics().rightBalance).toBeUndefined();
-        expect(tree.metrics().rotateRight).toEqual(1);
-        expect(tree.metrics().leftBalance).toEqual(1);
+        const metrics = tree.metrics();
+        expect(metrics.addLeft).toEqual(2);
+        expect(metrics.addRight).toEqual(1);
+        expect(metrics.insertion).toEqual(3);
+        expect(metrics.rotateLeft).toEqual(1);
+        expect(metrics.rightBalance).toBeUndefined();
+        expect(metrics.rotateRight).toEqual(1);
+        expect(metrics.leftBalance).toEqual(1);
     });
     test('should right balance with a double rotation on a non-root node', () => {
         let tree = new Tree();
@@ -192,11 +216,14 @@ describe('AVL Tree insertions', () => {
         expect(tree.toArray({ notation: 'infix' })).toStrictEqual(['a', 'b', 'c', 'd', 'e']);
         expect(tree.toArray({ notation: 'prefix' })).toStrictEqual(['b', 'a', 'd', 'c', 'e']);
         expect(tree.toArray({ notation: 'postfix' })).toStrictEqual(['a', 'c', 'e', 'd', 'b']);
-        expect(tree.metrics().insertion).toEqual(5);
-        expect(tree.metrics().rotateLeft).toEqual(1);
-        expect(tree.metrics().rightBalance).toEqual(1);
-        expect(tree.metrics().rotateRight).toEqual(1);
-        expect(tree.metrics().leftBalance).toBeUndefined();
+        const metrics = tree.metrics();
+        expect(metrics.addLeft).toEqual(2);
+        expect(metrics.addRight).toEqual(5);
+        expect(metrics.insertion).toEqual(5);
+        expect(metrics.rotateLeft).toEqual(1);
+        expect(metrics.rightBalance).toEqual(1);
+        expect(metrics.rotateRight).toEqual(1);
+        expect(metrics.leftBalance).toBeUndefined();
     });
     test('should left balance with a double rotation on a non-root node', () => {
         let tree = new Tree();
@@ -208,11 +235,14 @@ describe('AVL Tree insertions', () => {
         expect(tree.toArray({ notation: 'infix' })).toStrictEqual(['a', 'b', 'c', 'd', 'e']);
         expect(tree.toArray({ notation: 'prefix' })).toStrictEqual(['d', 'b', 'a', 'c', 'e']);
         expect(tree.toArray({ notation: 'postfix' })).toStrictEqual(['a', 'c', 'b', 'e', 'd']);
-        expect(tree.metrics().insertion).toEqual(5);
-        expect(tree.metrics().rotateLeft).toEqual(1);
-        expect(tree.metrics().rightBalance).toBeUndefined();
-        expect(tree.metrics().rotateRight).toEqual(1);
-        expect(tree.metrics().leftBalance).toEqual(1);
+        const metrics = tree.metrics();
+        expect(metrics.addLeft).toEqual(5);
+        expect(metrics.addRight).toEqual(2);
+        expect(metrics.insertion).toEqual(5);
+        expect(metrics.rotateLeft).toEqual(1);
+        expect(metrics.rightBalance).toBeUndefined();
+        expect(metrics.rotateRight).toEqual(1);
+        expect(metrics.leftBalance).toEqual(1);
     });
 });
 
@@ -227,10 +257,21 @@ describe('AVL Tree output to array', () => {
         expect(tree.toArray()).toStrictEqual(['a', 'b', 'c', 'd', 'e']);
         expect(tree.toArray({ notation: 'prefix' })).toStrictEqual(['d', 'b', 'a', 'c', 'e']);
         expect(tree.toArray({ notation: 'postfix' })).toStrictEqual(['a', 'c', 'b', 'e', 'd']);
-        expect(tree.metrics().insertion).toEqual(5);
-        expect(tree.metrics().rotateLeft).toEqual(1);
-        expect(tree.metrics().rightBalance).toBeUndefined();
-        expect(tree.metrics().rotateRight).toEqual(1);
-        expect(tree.metrics().leftBalance).toEqual(1);
+        const metrics = tree.metrics();
+        expect(metrics.addLeft).toEqual(5);
+        expect(metrics.addRight).toEqual(2);
+        expect(metrics.insertion).toEqual(5);
+        expect(metrics.rotateLeft).toEqual(1);
+        expect(metrics.rightBalance).toBeUndefined();
+        expect(metrics.rotateRight).toEqual(1);
+        expect(metrics.leftBalance).toEqual(1);
     });
+});
+
+describe('AVL Tree search', () => {
+    test.todo('should throw if the search value is null');
+    test.todo('should throw if the search value is undefined');
+    test.todo('should return a node that matches the search value exactly');
+    test.todo('should return null if the search term is not found');
+    test.todo('should return the number of left and right node traversals used in the search');
 });
