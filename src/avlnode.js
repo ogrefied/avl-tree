@@ -1,10 +1,20 @@
-const Metrics = require('./avlmetrics');
+import {
+    AvlTreeBalanceLeftOnEmptyNodeError,
+    AvlTreeBalanceRightOnEmptyNodeError,
+    AvlTreeDuplicateKeyError,
+    AvlTreeEmptyPayloadError,
+    AvlTreeRotateLeftWithoutRightChildError,
+    AvlTreeRotateRightWithoutLeftChildError,
+    AvlTreeRotationOnEmptyNodeError,
+    AvlTreeTypeMismatchError,
+} from '../src/avlerrors';
+import { Metrics } from './avlmetrics';
 
 const LEFT_HIGH = 'LEFT_HIGH';
 const BALANCED = 'BALANCED';
 const RIGHT_HIGH = 'RIGHT_HIGH';
 
-class Node {
+export class Node {
     constructor() {
         this.payload = null;
         this.left = null;
@@ -14,12 +24,12 @@ class Node {
     }
 
     getMetrics() {
-        let mine = this.metrics.counters;
+        let all = { ...this.metrics.counters };
         const lm = this.left ? this.left.getMetrics() : {};
         const rm = this.right ? this.right.getMetrics() : {};
-        Object.getOwnPropertyNames(lm).forEach(m => mine[m] ? mine[m] += lm[m] : mine[m] = lm[m]);
-        Object.getOwnPropertyNames(rm).forEach(m => mine[m] ? mine[m] += rm[m] : mine[m] = rm[m]);
-        return mine;
+        Object.getOwnPropertyNames(lm).forEach(m => all[m] ? all[m] += lm[m] : all[m] = lm[m]);
+        Object.getOwnPropertyNames(rm).forEach(m => all[m] ? all[m] += rm[m] : all[m] = rm[m]);
+        return all;
     }
 
     toArray(out, notation) {
@@ -44,16 +54,16 @@ class Node {
     }
 
     rotateLeft(oldRoot) {
-        oldRoot.metrics.increment('rotateLeft');
         /* These error checks are probably unnecessary since class Node
          * is used exclusively by class Tree
          */
         /* istanbul ignore if */
         if (!oldRoot)
-            throw new Error('Cannot rotate a null node');
+            throw new AvlTreeRotationOnEmptyNodeError();
         /* istanbul ignore if */
         if (!oldRoot.right)
-            throw new Error('Cannot rotate left if node.right is null');
+            throw new AvlTreeRotateLeftWithoutRightChildError(oldRoot.payload);
+        oldRoot.metrics.increment('rotateLeft');
         let newRoot = oldRoot.right;
         oldRoot.right = newRoot.left;
         newRoot.left = oldRoot;
@@ -64,10 +74,10 @@ class Node {
         oldRoot.metrics.increment('rotateRight');
         /* istanbul ignore if */
         if (!oldRoot)
-            throw new Error('Cannot rotate a null node');
+            throw new AvlTreeRotationOnEmptyNodeError();
         /* istanbul ignore if */
         if (!oldRoot.left)
-            throw new Error('Cannot rotate right if node.left is null');
+            throw new AvlTreeRotateRightWithoutLeftChildError(oldRoot.payload);
         let newRoot = oldRoot.left;
         oldRoot.left = newRoot.right;
         newRoot.right = oldRoot;
@@ -93,7 +103,7 @@ class Node {
         atNode.metrics.increment('rightBalance');
         /* istanbul ignore if */
         if (!atNode)
-            throw new Error('Cannot right balance a null node');
+            throw new AvlTreeBalanceRightOnEmptyNodeError();
         let atNodeRight = atNode.right;
         switch (atNodeRight.balance) {
             case RIGHT_HIGH:
@@ -134,7 +144,7 @@ class Node {
         atNode.metrics.increment('leftBalance');
         /* istanbul ignore if */
         if (!atNode)
-            throw new Error('Cannot left balance a null node');
+            throw new AvlTreeBalanceLeftOnEmptyNodeError();
         // if (!atNode.left || !atNode.left.right)
         //     throw new Error('Cannot left balance this tree');
         let atNodeLeft = atNode.left;
@@ -173,6 +183,8 @@ class Node {
     }
 
     add(payload) {
+        if (payload == null)
+            throw new AvlTreeEmptyPayloadError();
         let thisTreeIsTaller = false;//whether this insertion grows the depth of this tree
         let subtreeIsTaller = false; //whether this insertion grows the depth of a subtree
         let newRootNode = null;      //if a rotation is required in a subtree
@@ -187,12 +199,16 @@ class Node {
             //return value of the add() call.
             return { taller: true };
         }
+        const existingType = typeof this.payload;
+        const insertedType = typeof payload;
+        if (insertedType !== existingType)
+            throw new AvlTreeTypeMismatchError(insertedType, existingType);
         if (payload > this.payload) {   //add right
             if (!this.right)
                 this.right = new Node();
             let taller;
+            this.metrics.increment('addRight');
             ({ taller, newRootNode } = this.right.add(payload));
-            this.metrics.increment('add');
             if (newRootNode) {
                 this.right = newRootNode;
                 newRootNode = null;
@@ -229,8 +245,8 @@ class Node {
             if (!this.left)
                 this.left = new Node();
             let taller;
+            this.metrics.increment('addLeft');
             ({ taller, newRootNode } = this.left.add(payload));
-            this.metrics.increment('add');
             if (newRootNode) {
                 this.left = newRootNode;
                 newRootNode = null;
@@ -263,7 +279,7 @@ class Node {
             //add with equal key
             //add a resulting payload to this nodes list
             //for now just
-            throw new Error('Adding multiple values with the same key not implemented.');
+            throw new AvlTreeDuplicateKeyError(payload);
         }
         return {
             taller: thisTreeIsTaller,
@@ -271,6 +287,38 @@ class Node {
         }
     }
 
-}
+    find(value, metrics) {
+        if (this.payload === value)
+            return {
+                node: this,
+                metrics: metrics.counters,
+            };
+        if (value < this.payload)
+            return this.findLeft(value, metrics);
+        return this.findRight(value, metrics);
+    }
 
-module.exports = Node;
+    findLeft(value, metrics) {
+        this.metrics.increment('searchLeft');
+        metrics.increment('searchLeft');
+        metrics.increment('depth');
+        if (this.left == null)
+            return {
+                node: null,
+                metrics: metrics.counters,
+            };
+        return this.left.find(value, metrics);
+    }
+
+    findRight(value, metrics) {
+        this.metrics.increment('searchRight');
+        metrics.increment('searchRight');
+        metrics.increment('depth');
+        if (this.right == null)
+            return {
+                node: null,
+                metrics: metrics.counters,
+            };
+        return this.right.find(value, metrics);
+    }
+}

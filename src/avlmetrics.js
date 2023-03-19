@@ -1,4 +1,4 @@
-class Metrics {
+export class Metrics {
     constructor() {
         this.counters = {}
     }
@@ -10,5 +10,3 @@ class Metrics {
         return this.counters[counter];
     }
 }
-
-module.exports = Metrics;
