@@ -286,7 +286,6 @@ describe('AVL Tree search', () => {
     });
     test('should return null if the search term is not found', () => {
         let tree = Tree.fromArray(['a', 'c', 'e', 'g', 'i', 'k']);
-        console.log(`tree: ${JSON.stringify(tree)}`);
         const { node: nodeM, metrics: metricsM } = tree.find('m');
         expect(nodeM).toEqual(null);
         expect(metricsM.searchLeft).toBeUndefined();
