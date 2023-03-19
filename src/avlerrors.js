@@ -57,6 +57,12 @@ export class AvlTreeRotationOnEmptyNodeError extends AvlTreeError {
     }
 }
 
+export class AvlTreeSearchValueEmptyError extends AvlTreeError {
+    constructor() {
+        super(`Find: missing search value`);
+    }
+}
+
 export class AvlTreeTypeMismatchError extends AvlTreeError {
     constructor(insertedType, existingType) {
         super(`Type mismatch: Insertion value type ${insertedType} does not match existing type ${existingType}.`);

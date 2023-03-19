@@ -287,14 +287,38 @@ export class Node {
         }
     }
 
-    find(value) {
+    find(value, metrics) {
         if (this.payload === value)
-            return this;
-        if (value < this.payload) {
-            this.metrics.increment('searchLeft');
-            return this.left.find(value);
-        }
+            return {
+                node: this,
+                metrics: metrics.counters,
+            };
+        if (value < this.payload)
+            return this.findLeft(value, metrics);
+        return this.findRight(value, metrics);
+    }
+
+    findLeft(value, metrics) {
+        this.metrics.increment('searchLeft');
+        metrics.increment('searchLeft');
+        metrics.increment('depth');
+        if (this.left == null)
+            return {
+                node: null,
+                metrics: metrics.counters,
+            };
+        return this.left.find(value, metrics);
+    }
+
+    findRight(value, metrics) {
         this.metrics.increment('searchRight');
-        return this.right.find(value);
+        metrics.increment('searchRight');
+        metrics.increment('depth');
+        if (this.right == null)
+            return {
+                node: null,
+                metrics: metrics.counters,
+            };
+        return this.right.find(value, metrics);
     }
 }

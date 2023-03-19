@@ -3,6 +3,7 @@ import {
     AvlTreeConstructionError,
     AvlTreeDuplicateKeyError,
     AvlTreeEmptyPayloadError,
+    AvlTreeSearchValueEmptyError,
     AvlTreeTypeMismatchError,
 } from '../src/avlerrors';
 
@@ -269,9 +270,32 @@ describe('AVL Tree output to array', () => {
 });
 
 describe('AVL Tree search', () => {
-    test.todo('should throw if the search value is null');
-    test.todo('should throw if the search value is undefined');
-    test.todo('should return a node that matches the search value exactly');
-    test.todo('should return null if the search term is not found');
-    test.todo('should return the number of left and right node traversals used in the search');
+    test('should throw if the search value is null or undefined', () => {
+        let tree = new Tree();
+        tree.add('a');
+        expect(() => tree.find(null)).toThrow(new AvlTreeSearchValueEmptyError().toString());
+        expect(() => tree.find(undefined)).toThrow(new AvlTreeSearchValueEmptyError().toString());
+    });
+    test('should return a node that matches the search value exactly', () => {
+        let tree = Tree.fromArray(['a', 'b', 'c', 'd', 'e', 'f']);
+        const { node, metrics } = tree.find('c');
+        expect(node.payload).toEqual('c');
+        expect(metrics.searchLeft).toEqual(1);
+        expect(metrics.searchRight).toEqual(1);
+        expect(metrics.depth).toEqual(2);
+    });
+    test('should return null if the search term is not found', () => {
+        let tree = Tree.fromArray(['a', 'c', 'e', 'g', 'i', 'k']);
+        console.log(`tree: ${JSON.stringify(tree)}`);
+        const { node: nodeM, metrics: metricsM } = tree.find('m');
+        expect(nodeM).toEqual(null);
+        expect(metricsM.searchLeft).toBeUndefined();
+        expect(metricsM.searchRight).toEqual(3);
+        expect(metricsM.depth).toEqual(3);
+        const { node: nodeJ, metrics: metricsJ } = tree.find('j');
+        expect(nodeJ).toEqual(null);
+        expect(metricsJ.searchLeft).toEqual(1);
+        expect(metricsJ.searchRight).toEqual(2);
+        expect(metricsJ.depth).toEqual(3);
+    });
 });
