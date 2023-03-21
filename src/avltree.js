@@ -1,6 +1,7 @@
 import { Node } from './avlnode';
 import {
     AvlTreeConstructionError,
+    AvlTreeParameterTypeMismatchError,
     AvlTreeSearchValueEmptyError,
 } from './avlerrors';
 import { Metrics } from './avlmetrics';
@@ -14,6 +15,13 @@ export class Tree {
         const { newRootNode } = this.root.add(payload);
         if (newRootNode)
             this.root = newRootNode;
+    }
+
+    depth(callMetrics = null) {
+        if (callMetrics != null && !(callMetrics instanceof Metrics))
+            throw new AvlTreeParameterTypeMismatchError('Metrics', typeof callMetrics);
+        let level = 0;
+        return this.root.depth(level, callMetrics);
     }
 
     find(value) {

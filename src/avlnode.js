@@ -23,6 +23,27 @@ export class Node {
         this.metrics = new Metrics();
     }
 
+    depth(level, callMetrics) {
+        if (this.balance === RIGHT_HIGH) {
+            callMetrics?.increment('searchRight');
+            this.metrics.increment('searchRight');
+            return this.right.depth(++level, callMetrics);
+        } else if (this.balance === LEFT_HIGH) {
+            callMetrics?.increment('searchLeft');
+            this.metrics.increment('searchLeft');
+            return this.left.depth(++level, callMetrics);
+        }
+        if (this.left == null && this.right == null) {
+            if (this.payload != null) {
+                return level + 1;
+            }
+            return level;
+        }
+        callMetrics?.increment('searchLeft');
+        this.metrics.increment('searchLeft');
+        return this.left.depth(++level, callMetrics);
+    }
+
     getMetrics() {
         let all = { ...this.metrics.counters };
         const lm = this.left ? this.left.getMetrics() : {};
@@ -36,19 +57,19 @@ export class Node {
         switch (notation) {
             case 'prefix':
                 out.push(this.payload);
-                this.left && this.left.toArray(out, notation);
-                this.right && this.right.toArray(out, notation);
+                this.left?.toArray(out, notation);
+                this.right?.toArray(out, notation);
                 break;
             case 'postfix':
-                this.left && this.left.toArray(out, notation);
-                this.right && this.right.toArray(out, notation);
+                this.left?.toArray(out, notation);
+                this.right?.toArray(out, notation);
                 out.push(this.payload);
                 break;
             case 'infix':
             default:
-                this.left && this.left.toArray(out, notation);
+                this.left?.toArray(out, notation);
                 out.push(this.payload);
-                this.right && this.right.toArray(out, notation);
+                this.right?.toArray(out, notation);
                 break;
         }
     }
