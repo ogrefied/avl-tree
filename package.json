@@ -1,6 +1,6 @@
 {
     "name": "@ogrefied/avl-tree",
-    "version": "0.5.1",
+    "version": "1.0.0",
     "description": "Implements a self-balancing binary tree",
     "main": "index.js",
     "scripts": {
