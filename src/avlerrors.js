@@ -39,6 +39,12 @@ export class AvlTreeEmptyPayloadError extends AvlTreeError {
     }
 }
 
+export class AvlTreeParameterTypeMismatchError extends AvlTreeError {
+    constructor(expectedType, foundType) {
+        super(`Parameter Type Mismatch: Expected type ${expectedType} but found ${foundType}`);
+    }
+}
+
 export class AvlTreeRotateLeftWithoutRightChildError extends AvlTreeError {
     constructor(nodePayload) {
         super(`Rotation Error: Cannot rotate left without right-hand child at node: ${nodePayload}`);

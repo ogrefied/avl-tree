@@ -10,7 +10,7 @@ export class Metrics {
     
     increment(counter) {
         if (!this.counters[counter])
-            this.counters[counter] = 0;
+            this.initialize(counter, 0);
         this.counters[counter]++;
         return this.counters[counter];
     }

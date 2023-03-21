@@ -23,28 +23,25 @@ export class Node {
         this.metrics = new Metrics();
     }
 
-    depth(callMetrics) {
+    depth(level, callMetrics) {
         if (this.balance === RIGHT_HIGH) {
-            callMetrics.increment('depth');
-            callMetrics.increment('searchRight');
+            callMetrics && callMetrics.increment('searchRight');
             this.metrics.increment('searchRight');
-            return this.right.depth(callMetrics);
+            return this.right.depth(++level, callMetrics);
         } else if (this.balance === LEFT_HIGH) {
-            callMetrics.increment('depth');
-            callMetrics.increment('searchLeft');
+            callMetrics && callMetrics.increment('searchLeft');
             this.metrics.increment('searchLeft');
-            return this.left.depth(callMetrics);
+            return this.left.depth(++level, callMetrics);
         }
         if (this.left == null && this.right == null) {
             if (this.payload != null) {
-                callMetrics.increment('depth');
+                return level + 1;
             }
-            return callMetrics;
+            return level;
         }
-        callMetrics.increment('depth');
-        callMetrics.increment('searchLeft');
+        callMetrics && callMetrics.increment('searchLeft');
         this.metrics.increment('searchLeft');
-        return this.left.depth(callMetrics);
+        return this.left.depth(++level, callMetrics);
     }
 
     getMetrics() {

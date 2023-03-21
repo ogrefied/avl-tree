@@ -1,8 +1,10 @@
 import { Tree } from '../src/avltree';
+import { Metrics } from '../src/avlmetrics';
 import {
     AvlTreeConstructionError,
     AvlTreeDuplicateKeyError,
     AvlTreeEmptyPayloadError,
+    AvlTreeParameterTypeMismatchError,
     AvlTreeSearchValueEmptyError,
     AvlTreeTypeMismatchError,
 } from '../src/avlerrors';
@@ -302,37 +304,47 @@ describe('AVL Tree search', () => {
 describe('AVL Tree depth', () => {
     test('should be zero for a new tree', () => {
         const tree = new Tree();
-        const { depth, searchLeft, searchRight } = tree.depth();
-        expect(depth).toEqual(0);
-        expect(searchLeft).toEqual(0);
-        expect(searchRight).toEqual(0);
+        expect(tree.depth()).toEqual(0);
     });
     test('should be one for a tree with a single node', () => {
         const tree = Tree.fromArray(['a']);
-        const { depth, searchLeft, searchRight } = tree.depth();
-        expect(depth).toEqual(1);
-        expect(searchLeft).toEqual(0);
-        expect(searchRight).toEqual(0);
+        expect(tree.depth()).toEqual(1);
+    });
+    test('should report the number of left and right traversals if a Metrics object is provided', () => {
+        const tree = Tree.fromArray(['m', 'i', 'p', 'o', 't']);
+        const metrics = new Metrics();
+        const depth = tree.depth(metrics);
+        expect(depth).toEqual(3);
+        expect(metrics.counters.searchLeft).toEqual(1);
+        expect(metrics.counters.searchRight).toEqual(1);
+    });
+    test('should throw an error if a non-Metrics type is passed as a collector', () => {
+        const tree = new Tree();
+        expect(() => tree.depth(1)).toThrow(new AvlTreeParameterTypeMismatchError('Metrics', 'number').toString())
+        expect(() => tree.depth({})).toThrow(new AvlTreeParameterTypeMismatchError('Metrics', 'object').toString())
     });
     test('should be two for a balanced tree with three nodes', () => {
         const tree = Tree.fromArray(['b', 'a', 'c']);
-        const { depth, searchLeft, searchRight } = tree.depth();
+        const metrics = new Metrics();
+        const depth = tree.depth(metrics);
         expect(depth).toEqual(2);
-        expect(searchLeft).toEqual(1);
-        expect(searchRight).toEqual(0);
+        expect(metrics.counters.searchLeft).toEqual(1);
+        expect(metrics.counters.searchRight).toBeUndefined();
     });
     test('should only result in depth-1 searches when the tree is left high', () => {
         const tree = Tree.fromArray(['m', 'i', 'p', 'e', 'j']);
-        const { depth, searchLeft, searchRight } = tree.depth();
+        const metrics = new Metrics();
+        const depth = tree.depth(metrics);
         expect(depth).toEqual(3);
-        expect(searchLeft).toEqual(2);
-        expect(searchRight).toEqual(0);
+        expect(metrics.counters.searchLeft).toEqual(2);
+        expect(metrics.counters.searchRight).toBeUndefined();
     });
     test('should only result in depth-1 searches when the tree is right high', () => {
         const tree = Tree.fromArray(['m', 'i', 'p', 'o', 't']);
-        const { depth, searchLeft, searchRight } = tree.depth();
+        const metrics = new Metrics();
+        const depth = tree.depth(metrics);
         expect(depth).toEqual(3);
-        expect(searchLeft).toEqual(1);
-        expect(searchRight).toEqual(1);
+        expect(metrics.counters.searchLeft).toEqual(1);
+        expect(metrics.counters.searchRight).toEqual(1);
     });
 });
