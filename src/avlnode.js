@@ -15,10 +15,11 @@ const BALANCED = 'BALANCED';
 const RIGHT_HIGH = 'RIGHT_HIGH';
 
 export class Node {
-    constructor() {
+    constructor(parent) {
         this.payload = null;
         this.left = null;
         this.right = null;
+        this.parent = parent ?? null;
         this.balance = BALANCED;
         this.metrics = new Metrics();
     }
@@ -86,8 +87,12 @@ export class Node {
             throw new AvlTreeRotateLeftWithoutRightChildError(oldRoot.payload);
         oldRoot.metrics.increment('rotateLeft');
         let newRoot = oldRoot.right;
+        newRoot.parent = oldRoot.parent;
         oldRoot.right = newRoot.left;
+        if (newRoot.left)
+            newRoot.left.parent = oldRoot;
         newRoot.left = oldRoot;
+        oldRoot.parent = newRoot;
         return newRoot;
     }
 
@@ -100,8 +105,12 @@ export class Node {
         if (!oldRoot.left)
             throw new AvlTreeRotateRightWithoutLeftChildError(oldRoot.payload);
         let newRoot = oldRoot.left;
+        newRoot.parent = oldRoot.parent;
         oldRoot.left = newRoot.right;
+        if (newRoot.right)
+            newRoot.right.parent = oldRoot;
         newRoot.right = oldRoot;
+        oldRoot.parent = newRoot;
         return newRoot;
     }
 
@@ -226,7 +235,7 @@ export class Node {
             throw new AvlTreeTypeMismatchError(insertedType, existingType);
         if (payload > this.payload) {   //add right
             if (!this.right)
-                this.right = new Node();
+                this.right = new Node(this);
             let taller;
             this.metrics.increment('addRight');
             ({ taller, newRootNode } = this.right.add(payload));
@@ -264,7 +273,7 @@ export class Node {
             }
         } else if (payload < this.payload) {    //add left
             if (!this.left)
-                this.left = new Node();
+                this.left = new Node(this);
             let taller;
             this.metrics.increment('addLeft');
             ({ taller, newRootNode } = this.left.add(payload));
