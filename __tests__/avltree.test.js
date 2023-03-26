@@ -9,12 +9,6 @@ import {
     AvlTreeTypeMismatchError,
 } from '../src/avlerrors';
 
-test('throw error on duplicate key', () => {
-    let t = new Tree();
-    t.add('a');
-    expect(() => t.add('a')).toThrow(new AvlTreeDuplicateKeyError('a').toString());
-});
-
 describe('AVL Tree creation', () => {
     test('should create an empty tree on construction', () => {
         const tree = new Tree();
@@ -57,7 +51,21 @@ describe('AVL Tree insertions', () => {
         expect(() => tree.add(null)).toThrow(new AvlTreeEmptyPayloadError().toString());
         expect(() => tree.add(undefined)).toThrow(new AvlTreeEmptyPayloadError().toString());
     });
-
+    test('should throw an error on duplicate key', () => {
+        const tree = new Tree();
+        tree.add('a');
+        expect(() => tree.add('a')).toThrow(new AvlTreeDuplicateKeyError('a').toString());
+    });
+    test('should set the parent of the root node to null', () => {
+        const tree = new Tree();
+        expect(tree.root.parent).toEqual(null);
+    });
+    test('should set the parent of a new node', () => {
+        const tree = new Tree();
+        tree.add('a');
+        tree.add('b');
+        expect(tree.root.right.parent).toEqual(tree.root);
+    });
     // SINGLE ROTATIONS
     test('should result in a left rotation when added in sequence order', () => {
         const tree = new Tree();
@@ -67,6 +75,8 @@ describe('AVL Tree insertions', () => {
         expect(tree.toArray({ notation: 'infix' })).toStrictEqual(['a', 'b', 'c']);
         expect(tree.toArray({ notation: 'prefix' })).toStrictEqual(['b', 'a', 'c']);
         expect(tree.toArray({ notation: 'postfix' })).toStrictEqual(['a', 'c', 'b']);
+        expect(tree.root.right.parent).toEqual(tree.root);
+        expect(tree.root.left.parent).toEqual(tree.root);
         const metrics = tree.metrics();
         expect(metrics.addLeft).toBeUndefined();
         expect(metrics.addRight).toEqual(3); // 2 right a, 1 right of b
@@ -84,6 +94,8 @@ describe('AVL Tree insertions', () => {
         expect(tree.toArray({ notation: 'infix' })).toStrictEqual(['a', 'b', 'c']);
         expect(tree.toArray({ notation: 'prefix' })).toStrictEqual(['b', 'a', 'c']);
         expect(tree.toArray({ notation: 'postfix' })).toStrictEqual(['a', 'c', 'b']);
+        expect(tree.root.right.parent).toEqual(tree.root);
+        expect(tree.root.left.parent).toEqual(tree.root);
         const metrics = tree.metrics();
         expect(metrics.addLeft).toEqual(3); // 2 left of c, 1 left of b
         expect(metrics.addRight).toBeUndefined();
@@ -106,6 +118,10 @@ describe('AVL Tree insertions', () => {
         expect(tree.toArray({ notation: 'infix' })).toStrictEqual(['a', 'b', 'c', 'd', 'e', 'f']);
         expect(tree.toArray({ notation: 'prefix' })).toStrictEqual(['d', 'b', 'a', 'c', 'e', 'f']);
         expect(tree.toArray({ notation: 'postfix' })).toStrictEqual(['a', 'c', 'b', 'f', 'e', 'd']);
+        expect(tree.root.right.parent).toEqual(tree.root);
+        expect(tree.root.left.parent).toEqual(tree.root);
+        expect(tree.root.right.right.parent).toEqual(tree.root.right);
+        expect(tree.root.left.left.parent).toEqual(tree.root.left);
         const metrics = tree.metrics();
         expect(metrics.addLeft).toEqual(4);
         expect(metrics.addRight).toEqual(5);
@@ -126,6 +142,10 @@ describe('AVL Tree insertions', () => {
         expect(tree.toArray({ notation: 'infix' })).toStrictEqual(['a', 'b', 'c', 'd', 'e', 'f']);
         expect(tree.toArray({ notation: 'prefix' })).toStrictEqual(['c', 'b', 'a', 'e', 'd', 'f']);
         expect(tree.toArray({ notation: 'postfix' })).toStrictEqual(['a', 'b', 'd', 'f', 'e', 'c']);
+        expect(tree.root.right.parent).toEqual(tree.root);
+        expect(tree.root.left.parent).toEqual(tree.root);
+        expect(tree.root.right.right.parent).toEqual(tree.root.right);
+        expect(tree.root.left.left.parent).toEqual(tree.root.left);
         const metrics = tree.metrics();
         expect(metrics.addLeft).toEqual(3);
         expect(metrics.addRight).toEqual(6);
@@ -143,6 +163,8 @@ describe('AVL Tree insertions', () => {
         expect(tree.toArray({ notation: 'infix' })).toStrictEqual(['a', 'b', 'c']);
         expect(tree.toArray({ notation: 'prefix' })).toStrictEqual(['b', 'a', 'c']);
         expect(tree.toArray({ notation: 'postfix' })).toStrictEqual(['a', 'c', 'b']);
+        expect(tree.root.right.parent).toEqual(tree.root);
+        expect(tree.root.left.parent).toEqual(tree.root);
         const metrics = tree.metrics();
         expect(metrics.addLeft).toEqual(1);
         expect(metrics.addRight).toEqual(2);
@@ -163,6 +185,10 @@ describe('AVL Tree insertions', () => {
         expect(tree.toArray({ notation: 'infix' })).toStrictEqual(['a', 'b', 'c', 'd', 'e', 'f']);
         expect(tree.toArray({ notation: 'prefix' })).toStrictEqual(['c', 'b', 'a', 'e', 'd', 'f']);
         expect(tree.toArray({ notation: 'postfix' })).toStrictEqual(['a', 'b', 'd', 'f', 'e', 'c']);
+        expect(tree.root.right.parent).toEqual(tree.root);
+        expect(tree.root.left.parent).toEqual(tree.root);
+        expect(tree.root.right.right.parent).toEqual(tree.root.right);
+        expect(tree.root.left.left.parent).toEqual(tree.root.left);
         const metrics = tree.metrics();
         expect(metrics.addLeft).toEqual(5);
         expect(metrics.addRight).toEqual(4);
@@ -183,6 +209,10 @@ describe('AVL Tree insertions', () => {
         expect(tree.toArray({ notation: 'infix' })).toStrictEqual(['a', 'b', 'c', 'd', 'e', 'f']);
         expect(tree.toArray({ notation: 'prefix' })).toStrictEqual(['d', 'b', 'a', 'c', 'e', 'f']);
         expect(tree.toArray({ notation: 'postfix' })).toStrictEqual(['a', 'c', 'b', 'f', 'e', 'd']);
+        expect(tree.root.right.parent).toEqual(tree.root);
+        expect(tree.root.left.parent).toEqual(tree.root);
+        expect(tree.root.right.right.parent).toEqual(tree.root.right);
+        expect(tree.root.left.left.parent).toEqual(tree.root.left);
         const metrics = tree.metrics();
         expect(metrics.addLeft).toEqual(6);
         expect(metrics.addRight).toEqual(3);
@@ -200,6 +230,8 @@ describe('AVL Tree insertions', () => {
         expect(tree.toArray({ notation: 'infix' })).toStrictEqual(['a', 'b', 'c']);
         expect(tree.toArray({ notation: 'prefix' })).toStrictEqual(['b', 'a', 'c']);
         expect(tree.toArray({ notation: 'postfix' })).toStrictEqual(['a', 'c', 'b']);
+        expect(tree.root.right.parent).toEqual(tree.root);
+        expect(tree.root.left.parent).toEqual(tree.root);
         const metrics = tree.metrics();
         expect(metrics.addLeft).toEqual(2);
         expect(metrics.addRight).toEqual(1);
@@ -219,6 +251,10 @@ describe('AVL Tree insertions', () => {
         expect(tree.toArray({ notation: 'infix' })).toStrictEqual(['a', 'b', 'c', 'd', 'e']);
         expect(tree.toArray({ notation: 'prefix' })).toStrictEqual(['b', 'a', 'd', 'c', 'e']);
         expect(tree.toArray({ notation: 'postfix' })).toStrictEqual(['a', 'c', 'e', 'd', 'b']);
+        expect(tree.root.right.parent).toEqual(tree.root);
+        expect(tree.root.left.parent).toEqual(tree.root);
+        expect(tree.root.right.right.parent).toEqual(tree.root.right);
+        expect(tree.root.right.left.parent).toEqual(tree.root.right);
         const metrics = tree.metrics();
         expect(metrics.addLeft).toEqual(2);
         expect(metrics.addRight).toEqual(5);
@@ -238,6 +274,10 @@ describe('AVL Tree insertions', () => {
         expect(tree.toArray({ notation: 'infix' })).toStrictEqual(['a', 'b', 'c', 'd', 'e']);
         expect(tree.toArray({ notation: 'prefix' })).toStrictEqual(['d', 'b', 'a', 'c', 'e']);
         expect(tree.toArray({ notation: 'postfix' })).toStrictEqual(['a', 'c', 'b', 'e', 'd']);
+        expect(tree.root.right.parent).toEqual(tree.root);
+        expect(tree.root.left.parent).toEqual(tree.root);
+        expect(tree.root.left.right.parent).toEqual(tree.root.left);
+        expect(tree.root.left.left.parent).toEqual(tree.root.left);
         const metrics = tree.metrics();
         expect(metrics.addLeft).toEqual(5);
         expect(metrics.addRight).toEqual(2);
