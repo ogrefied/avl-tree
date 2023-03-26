@@ -75,6 +75,16 @@ export class Node {
         }
     }
 
+    toJson() {
+        const self = { ...this };
+        delete self.parent;
+        if (this.left)
+            self.left = this.left.toJson();
+        if (this.right)
+            self.right = this.right.toJson();
+        return self;
+    }
+
     rotateLeft(oldRoot) {
         /* These error checks are probably unnecessary since class Node
          * is used exclusively by class Tree

@@ -311,6 +311,18 @@ describe('AVL Tree output to array', () => {
     });
 });
 
+describe('AVL Tree output to JSON', () => {
+    test('should contain all fields but parent', () => {
+        const tree = Tree.fromArray(['a', 'c', 'e', 'g', 'i', 'k']);
+        const json = tree.toJson();
+        const jsonString = JSON.stringify(json);
+        expect(jsonString.length).toBe(743);
+        expect(tree.root.left.parent).toBeTruthy();
+        expect(tree.root.right.parent).toBeTruthy();
+        expect(json.left.parent).toBeUndefined();
+        expect(json.right.parent).toBeUndefined();
+    });
+});
 describe('AVL Tree search', () => {
     test('should throw if the search value is null or undefined', () => {
         const tree = new Tree();

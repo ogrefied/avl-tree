@@ -37,6 +37,10 @@ export class Tree {
         return out;
     }
 
+    toJson() {
+        return this.root.toJson();
+    }
+
     static fromArray(source) {
         if (!Array.isArray(source))
             throw new AvlTreeConstructionError();
